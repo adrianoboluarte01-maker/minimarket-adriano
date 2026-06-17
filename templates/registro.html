@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Crear Cuenta - Minimarket Adriano{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-xl-10">
+            <div class="card border-0 shadow-lg overflow-hidden rounded-4 bg-white">
+                <div class="row g-0">
+                    
+                    <div class="col-lg-6 p-4 p-md-5 d-flex flex-column justify-content-center">
+                        <div class="mb-4">
+                            <h2 class="fw-bold text-dark mb-1">Crear Cuenta</h2>
+                            <p class="text-secondary small">Regístrate para obtener credenciales de acceso al sistema.</p>
+                        </div>
+                        
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <div class="alert alert-{% if category == 'error' %}danger{% else %}success{% endif %} p-2 small mb-3" role="alert">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                        
+                        <form action="{{ url_for('registro') }}" method="POST">
+                            <div class="mb-3">
+                                <label for="username" class="form-label text-secondary small fw-semibold">
+                                    Nuevo Usuario o Correo
+                                </label>
+                                <input type="text" class="form-control py-2 text-dark" id="username" name="username" placeholder="Ej: adriano2026" required autocomplete="off" style="border-color: #dee2e6;">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="password" class="form-label text-secondary small fw-semibold">
+                                    Contraseña de Seguridad
+                                </label>
+                                <input type="password" class="form-control py-2 text-dark" id="password" name="password" placeholder="••••••••" required style="border-color: #dee2e6;">
+                            </div>
+                            
+                            <button type="submit" class="btn w-100 py-2.5 fw-bold text-white rounded-3 transition-btn" style="background-color: #10b981; border: none; font-size: 1.05rem;">
+                                Registrar Usuario
+                            </button>
+                        </form>
+                        
+                        <div class="text-center mt-4">
+                            <span class="text-muted small">¿Ya tienes una cuenta administrativa? <a href="{{ url_for('login') }}" class="text-primary text-decoration-none fw-semibold">Iniciar Sesión</a></span>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 d-none d-lg-block position-relative" style="background: linear-gradient(rgba(0,0,0,0.15), rgba(0,0,0,0.45)), url('https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1000&auto=format&fit=crop') center/cover no-repeat;">
+                        <div class="position-absolute bottom-0 start-0 p-5 text-white">
+                            <h4 class="fw-bold mb-1" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.6);">Control de Inventarios</h4>
+                            <p class="small mb-0 opacity-90" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.6);">Acceso exclusivo para personal autorizado de tienda.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .transition-btn:hover {
+        background-color: #059669 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+    .transition-btn {
+        transition: all 0.2s ease-in-out;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Historial de Ventas - Minimarket Adriano{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h2 class="fw-bold"><i class="bi bi-receipt me-2"></i>Historial de Ventas</h2>
+        <p class="text-muted">Consulta el registro de todas las boletas y transacciones procesadas.</p>
+    </div>
+</div>
+
+<div class="card p-4 shadow-sm bg-white border-0">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>N° Boleta</th>
+                    <th>Fecha y Hora</th>
+                    <th class="text-start">Productos Vendidos</th>
+                    <th>Total Pagado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if ventas %}
+                    {% for venta in ventas %}
+                    <tr>
+                        <td class="fw-bold text-secondary">#{{ "%05d"|format(venta.id) }}</td>
+                        <td>{{ venta.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
+                        <td class="text-start text-dark font-monospace small">{{ venta.productos_vendidos }}</td>
+                        <td class="fw-bold text-success">S/ {{ "%.2f"|format(venta.total) }}</td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="4" class="text-muted py-4">No se han registrado ventas el día de hoy.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

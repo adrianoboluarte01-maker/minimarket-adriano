@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Comercial - Minimarket Adriano{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+    
+    <div class="row mb-4 align-items-center border-bottom pb-4">
+        <div class="col-md-8">
+            <h1 class="fw-bold text-dark mb-1">Panel de Control Analítico</h1>
+            <p class="text-muted fs-5 mb-0">Resumen operativo y estado financiero del negocio en tiempo real.</p>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <span class="badge bg-light text-dark p-3 rounded-3 border">
+                <i class="bi bi-shield-check text-success me-2"></i> Administrador Activo
+            </span>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 bg-white rounded-3 p-4 border-top border-4" style="border-top-color: #0d6efd !important;">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <span class="text-uppercase fw-bold small text-muted tracking-wide">Productos en Catálogo</span>
+                    <div class="p-2 rounded bg-opacity-10 bg-primary">
+                        <i class="bi bi-box-seam fs-4 text-primary"></i>
+                    </div>
+                </div>
+                <h2 class="display-6 fw-bold text-dark mb-2">{{ total_productos if total_productos is not none else 0 }}</h2>
+                <p class="small text-secondary mb-0"><i class="bi bi-check-circle-fill text-success me-1"></i> Sincronizado con inventario</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 bg-white rounded-3 p-4 border-top border-4" style="border-top-color: #10b981 !important;">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <span class="text-uppercase fw-bold small text-muted tracking-wide">Ingresos del Día</span>
+                    <div class="p-2 rounded bg-opacity-10 bg-success">
+                        <i class="bi bi-currency-dollar fs-4 text-success"></i>
+                    </div>
+                </div>
+                <h2 class="display-6 fw-bold text-success mb-2">
+                    S/ {{ "%.2f"|format(total_ventas_hoy) if total_ventas_hoy is not none else "0.00" }}
+                </h2>
+                <p class="small text-secondary mb-0"><i class="bi bi-arrow-up-short text-success me-1"></i> Caja chica activa hoy</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            {% if stock_bajo and stock_bajo > 0 %}
+            <div class="card h-100 shadow-sm border-0 bg-white rounded-3 p-4 border-top border-4" style="border-top-color: #dc3545 !important;">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <span class="text-uppercase fw-bold small text-muted tracking-wide">Alertas de Reposición</span>
+                    <div class="p-2 rounded bg-opacity-10 bg-danger">
+                        <i class="bi bi-exclamation-triangle fs-4 text-danger"></i>
+                    </div>
+                </div>
+                <h2 class="display-6 fw-bold text-danger mb-2">{{ stock_bajo }}</h2>
+                <p class="small text-secondary mb-0"><i class="bi bi-x-circle-fill text-danger me-1"></i> Productos con 5 u. o menos</p>
+            </div>
+            {% else %}
+            <div class="card h-100 shadow-sm border-0 bg-white rounded-3 p-4 border-top border-4" style="border-top-color: #6c757d !important;">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <span class="text-uppercase fw-bold small text-muted tracking-wide">Alertas de Reposición</span>
+                    <div class="p-2 rounded bg-opacity-10 bg-secondary">
+                        <i class="bi bi-check-lg fs-4 text-secondary"></i>
+                    </div>
+                </div>
+                <h2 class="display-6 fw-bold text-secondary mb-2">0</h2>
+                <p class="small text-secondary mb-0"><i class="bi bi-check-circle-fill text-success me-1"></i> Stock en nivel óptimo</p>
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <div class="bg-light p-4 rounded-3 border">
+        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-lightning-charge-fill text-warning me-2"></i>Accesos Directos del Sistema</h5>
+        <div class="d-flex flex-wrap gap-3">
+            <a href="{{ url_for('caja') }}" class="btn btn-outline-primary px-4 py-2 rounded-3 fw-semibold"><i class="bi bi-calculator me-2"></i>Abrir Caja TPV</a>
+            <a href="{{ url_for('productos') }}" class="btn btn-outline-secondary px-4 py-2 rounded-3 fw-semibold"><i class="bi bi-box-seam me-2"></i>Ver Inventario</a>
+            <a href="{{ url_for('ventas_historial') }}" class="btn btn-outline-success px-4 py-2 rounded-3 fw-semibold"><i class="bi bi-receipt me-2"></i>Historial de Boletas</a>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

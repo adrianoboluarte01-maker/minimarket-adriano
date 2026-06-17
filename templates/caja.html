@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+{% block title %}Caja - Minimarket Adriano{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h2 class="fw-bold"><i class="bi bi-calculator me-2"></i>Punto de Venta (Caja)</h2>
+        <p class="text-muted">Selecciona los productos para generar una venta rápida.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-7">
+        <div class="card p-4 shadow-sm bg-white border-0">
+            <h5 class="fw-bold mb-3">Productos Disponibles</h5>
+            <div class="row g-3" style="max-height: 500px; overflow-y: auto; padding: 5px;">
+                {% for producto in productos %}
+                <div class="col-md-6">
+                    <div class="card p-2 border d-flex flex-row align-items-center justify-content-between h-100">
+                        <div class="me-2">
+                            <h6 class="fw-bold mb-0 text-dark">{{ producto.nombre }}</h6>
+                            <small class="text-muted">Stock: {{ producto.stock }} und.</small><br>
+                            <span class="fw-bold text-success">S/ {{ producto.precio }}</span>
+                        </div>
+                        <div>
+                            {% if producto.stock > 0 %}
+                            <button class="btn btn-sm btn-primary btn-agregar" 
+                                    data-id="{{ producto.id }}" 
+                                    data-nombre="{{ producto.nombre }}" 
+                                    data-precio="{{ producto.precio }}" 
+                                    data-stock="{{ producto.stock }}">
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
+                            {% else %}
+                            <span class="badge bg-danger">Agotado</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-5">
+        <div class="card p-4 shadow-sm bg-white border-0 h-100 d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0"><i class="bi bi-receipt me-2"></i>Detalle de Venta</h5>
+                <button class="btn btn-sm btn-outline-danger fw-semibold" id="btn-vaciar" onclick="vaciarCarritoTotal()" disabled>
+                    <i class="bi bi-trash me-1"></i> Cancelar Todo
+                </button>
+            </div>
+            
+            <div class="table-responsive flex-grow-1" style="min-height: 250px; max-height: 350px; overflow-y: auto;">
+                <table class="table table-sm align-middle text-center">
+                    <thead>
+                        <tr>
+                            <th class="text-start">Prod.</th>
+                            <th>Cant.</th>
+                            <th>Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpo-carrito">
+                        <tr id="carrito-vacio">
+                            <td colspan="4" class="text-muted py-4">No hay productos agregados</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <hr>
+
+            <div class="mt-auto">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">Total General:</h5>
+                    <h4 class="fw-bold text-primary mb-0" id="total-venta">S/ 0.00</h4>
+                </div>
+                
+                <form id="formulario-venta" action="{{ url_for('procesar_venta') }}" method="POST">
+                    <input type="hidden" name="items_json" id="items_json">
+                    <button type="submit" class="btn btn-success w-100 py-2 fw-bold" id="btn-cobrar" disabled>
+                        <i class="bi bi-cash-coin me-2"></i>Procesar Venta
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let carrito = [];
+
+    // Escuchar los clicks de los botones de agregar sin romper la sintaxis del HTML
+    document.addEventListener('click', function(e) {
+        const boton = e.target.closest('.btn-agregar');
+        if (boton) {
+            const id = boton.getAttribute('data-id');
+            const nombre = boton.getAttribute('data-nombre');
+            const precio = parseFloat(boton.getAttribute('data-precio'));
+            const stockMax = parseInt(boton.getAttribute('data-stock'));
+            
+            agregarAlCarrito(id, nombre, precio, stockMax);
+        }
+    });
+
+    function agregarAlCarrito(id, nombre, precio, stockMax) {
+        let itemExistente = carrito.find(item => item.id === id);
+
+        if (itemExistente) {
+            if (itemExistente.cantidad >= stockMax) {
+                alert("No puedes vender más unidades de las que hay en stock.");
+                return;
+            }
+            itemExistente.cantidad += 1;
+        } else {
+            carrito.push({ id: id, nombre: nombre, precio: precio, cantidad: 1, stockMax: stockMax });
+        }
+
+        actualizarTablaHTML();
+    }
+
+    function cambiarCantidad(id, cambio) {
+        let item = carrito.find(item => item.id === id);
+        if (!item) return;
+
+        item.cantidad += cambio;
+
+        if (item.cantidad > item.stockMax) {
+            alert("Excede el stock disponible.");
+            item.cantidad = item.stockMax;
+        }
+
+        if (item.cantidad <= 0) {
+            eliminarDelCarrito(id);
+        } else {
+            actualizarTablaHTML();
+        }
+    }
+
+    function eliminarDelCarrito(id) {
+        carrito = carrito.filter(item => item.id !== id);
+        actualizarTablaHTML();
+    }
+
+    function vaciarCarritoTotal() {
+        if(confirm("¿Estás seguro de que deseas cancelar todos los productos de la venta en curso?")) {
+            carrito = [];
+            actualizarTablaHTML();
+        }
+    }
+
+    function actualizarTablaHTML() {
+        const tbody = document.getElementById('cuerpo-carrito');
+        const totalVentaHTML = document.getElementById('total-venta');
+        const btnCobrar = document.getElementById('btn-cobrar');
+        const btnVaciar = document.getElementById('btn-vaciar');
+        const inputJson = document.getElementById('items_json');
+
+        if (carrito.length === 0) {
+            tbody.innerHTML = `
+                <tr id="carrito-vacio">
+                    <td colspan="4" class="text-muted py-4">No hay productos agregados</td>
+                </tr>`;
+            totalVentaHTML.innerText = "S/ 0.00";
+            btnCobrar.disabled = true;
+            btnVaciar.disabled = true;
+            inputJson.value = "";
+            return;
+        }
+
+        tbody.innerHTML = "";
+        let totalGeneral = 0;
+
+        carrito.forEach(item => {
+            let totalItem = item.precio * item.cantidad;
+            totalGeneral += totalItem;
+
+            // Aquí usamos comillas invertidas de JS de forma limpia
+            tbody.innerHTML += `
+                <tr>
+                    <td class="text-start small fw-bold">${item.nombre}</td>
+                    <td>
+                        <div class="d-flex align-items-center justify-content-center gap-1">
+                            <button class="btn btn-xs btn-outline-secondary p-0 px-1" style="font-size:0.75rem;" onclick="cambiarCantidad('${item.id}', -1)">-</button>
+                            <span class="mx-1">${item.cantidad}</span>
+                            <button class="btn btn-xs btn-outline-secondary p-0 px-1" style="font-size:0.75rem;" onclick="cambiarCantidad('${item.id}', 1)">+</button>
+                        </div>
+                    </td>
+                    <td class="fw-bold">S/ ${totalItem.toFixed(2)}</td>
+                    <td>
+                        <button class="btn btn-sm text-danger p-0" onclick="eliminarDelCarrito('${item.id}')">
+                            <i class="bi bi-x-circle-fill"></i>
+                        </button>
+                    </td>
+                </tr>`;
+        });
+
+        totalVentaHTML.innerText = "S/ " + totalGeneral.toFixed(2);
+        btnCobrar.disabled = false;
+        btnVaciar.disabled = false;
+        
+        inputJson.value = JSON.stringify(carrito);
+    }
+</script>
+{% endblock %}

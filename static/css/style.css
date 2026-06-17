@@ -1,0 +1,52 @@
+/* Configuración de colores principales */
+:root {
+    --primary-color: #df4097; /* Rosa característico */
+    --accent-color: #d4af37;  /* Detalles en oro */
+    --dark-color: #212529;
+    --light-bg: #f8f9fa;
+}
+
+body {
+    background-color: var(--light-bg);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Barra de navegación */
+.navbar-custom {
+    background-color: var(--dark-color);
+    border-bottom: 4px solid var(--primary-color);
+}
+
+.navbar-brand-custom {
+    color: var(--primary-color) !important;
+    font-weight: bold;
+    font-size: 1.4rem;
+}
+
+.navbar-brand-custom span {
+    color: var(--accent-color);
+}
+
+/* Tarjetas de productos y contenedores */
+.card-producto {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease;
+}
+
+.card-producto:hover {
+    transform: translateY(-5px);
+}
+
+.btn-primary-custom {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary-custom:hover {
+    background-color: #c23281;
+    border-color: #c23281;
+    color: white;
+}

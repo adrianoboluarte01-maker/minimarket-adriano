@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ 'Editar' if producto else 'Nuevo' }} Producto - Minimarket Adriano{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6">
+        <div class="card p-4 shadow card-producto bg-white">
+            <h3 class="fw-bold mb-3 text-dark">
+                <i class="bi bi-pencil-square me-2 text-primary-custom"></i>
+                {{ 'Editar Producto' if producto else 'Registrar Nuevo Producto' }}
+            </h3>
+            <hr>
+            
+            <form method="POST">
+                <div class="mb-3">
+                    <label for="nombre" class="form-label fw-semibold">Nombre del Producto</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" 
+                           value="{{ producto.nombre if producto else '' }}" required autocomplete="off" placeholder="Ej. Inca Kola 1.5L">
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="precio" class="form-label fw-semibold">Precio de Venta (S/)</label>
+                        <input type="number" step="0.10" min="0" class="form-control" id="precio" name="precio" 
+                               value="{{ producto.precio if producto else '' }}" required placeholder="0.00">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="stock" class="form-label fw-semibold">Cantidad en Stock</label>
+                        <input type="number" min="0" class="form-control" id="stock" name="stock" 
+                               value="{{ producto.stock if producto else '' }}" required placeholder="0">
+                    </div>
+                </div>
+                
+                <div class="d-flex gap-2 mt-3">
+                    <button type="submit" class="btn btn-primary-custom flex-grow-1 py-2">
+                        <i class="bi bi-floppy me-2"></i>Guardar Cambios
+                    </button>
+                    <a href="{{ url_for('productos') }}" class="btn btn-light border py-2 px-4">
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

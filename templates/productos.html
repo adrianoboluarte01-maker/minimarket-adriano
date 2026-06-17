@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Inventario - Minimarket Adriano{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-md-6">
+        <h2 class="fw-bold"><i class="bi bi-box-seam me-2"></i>Gestión de Inventario</h2>
+        <p class="text-muted">Administra el stock, precios e imágenes de tus productos.</p>
+    </div>
+    <div class="col-md-6 text-md-end">
+        <a href="{{ url_for('nuevo_producto') }}" class="btn btn-primary-custom px-4 py-2 shadow-sm">
+            <i class="bi bi-plus-circle me-2"></i>Agregar Producto
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+    {% if productos %}
+        {% for producto in productos %}
+        <div class="col-md-3">
+            <div class="card h-100 card-producto bg-white text-center p-3">
+                <div class="bg-white rounded p-2 mb-3 d-flex align-items-center justify-content-center" style="height: 160px; overflow: hidden; border: 1px solid #eee;">
+                    {% if 'Inca Kola' in producto.nombre or 'inka kola' in producto.nombre %}
+                        <img src="{{ url_for('static', filename='img/incakola.jpg') }}" class="img-fluid" style="max-height: 140px; object-fit: contain;">
+                    {% elif 'Coca Cola' in producto.nombre %}
+                        <img src="{{ url_for('static', filename='img/cocacola.jpg') }}" class="img-fluid" style="max-height: 140px; object-fit: contain;">
+                    {% elif 'Arroz' in producto.nombre %}
+                        <img src="{{ url_for('static', filename='img/arroz.jpg') }}" class="img-fluid" style="max-height: 140px; object-fit: contain;">
+                    {% elif 'Aceite' in producto.nombre %}
+                        <img src="{{ url_for('static', filename='img/aceite.jpg') }}" class="img-fluid" style="max-height: 140px; object-fit: contain;">
+                    {% elif 'Leche' in producto.nombre %}
+                        <img src="{{ url_for('static', filename='img/leche.jpg') }}" class="img-fluid" style="max-height: 140px; object-fit: contain;">
+                    {% elif 'Casino' in producto.nombre %}
+                        <img src="{{ url_for('static', filename='img/casino.jpg') }}" class="img-fluid" style="max-height: 140px; object-fit: contain;">
+                    {% elif 'Fideos' in producto.nombre %}
+                        <img src="{{ url_for('static', filename='img/fideos.jpg') }}" class="img-fluid" style="max-height: 140px; object-fit: contain;">
+                    {% elif 'Detergente' in producto.nombre %}
+                        <img src="{{ url_for('static', filename='img/detergente.jpg') }}" class="img-fluid" style="max-height: 140px; object-fit: contain;">
+                    {% else %}
+                        <i class="bi bi-box-seam text-muted" style="font-size: 3rem;"></i>
+                    {% endif %}
+                </div>
+                
+                <h5 class="fw-bold text-dark mb-1">{{ producto.nombre }}</h5>
+                <p class="text-muted mb-2">Stock: 
+                    <span class="badge {{ 'bg-danger' if producto.stock <= 5 else 'bg-success' }}">
+                        {{ producto.stock }} unidades
+                    </span>
+                </p>
+                <h4 class="fw-bold mb-3" style="color: var(--primary-color);">S/ {{ "%.2f"|format(producto.precio) }}</h4>
+                
+                <div class="d-flex gap-2 justify-content-center mt-auto">
+                    <a href="{{ url_for('editar_producto', id=producto.id) }}" class="btn btn-sm btn-outline-dark px-3">
+                        <i class="bi bi-pencil-square me-1"></i>Editar
+                    </a>
+                    <a href="{{ url_for('eliminar_producto', id=producto.id) }}" class="btn btn-sm btn-outline-danger px-3" onclick="return confirm('¿Seguro que deseas eliminar este producto?')">
+                        <i class="bi bi-trash me-1"></i>Eliminar
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-11 text-center py-5 bg-white rounded shadow-sm mx-auto">
+            <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
+            <h4 class="mt-3 text-muted">No hay productos registrados en el inventario.</h4>
+            <p class="text-muted small">Haz clic en el botón superior para añadir el primero.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
