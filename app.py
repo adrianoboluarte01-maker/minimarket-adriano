@@ -121,19 +121,12 @@ def dashboard():
     for venta in ventas_hoy:
         if venta.fecha.date() == hoy:
             total_ventas_hoy += venta.total
-
-    # Definimos los datos del gráfico aquí arriba para que el render esté ordenado
-    datos_grafico = {
-        "ventas_hoy": total_ventas_hoy,
-        "total_inventario": sum([p.precio * p.stock for p in Producto.query.all()])
-    }
     
     return render_template(
         'dashboard.html', 
         total_productos=total_productos, 
         stock_bajo=stock_bajo, 
-        total_ventas_hoy=total_ventas_hoy,
-        datos_grafico=datos_grafico
+        total_ventas_hoy=total_ventas_hoy
     )
 
 
