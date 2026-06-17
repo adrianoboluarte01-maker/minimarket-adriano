@@ -24,15 +24,13 @@ class Usuario(db.Model):
     def __repr__(self):
         return f'<Usuario {self.username}>'
 
+# Modifica tu clase Producto solo para esto:
 class Producto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
-    precio = db.Column(db.Float, nullable=False)
+    precio = db.Column(db.Float, nullable=False) # Precio de venta
+    precio_costo = db.Column(db.Float, default=0.0) # <--- Único añadido para rentabilidad
     stock = db.Column(db.Integer, nullable=False)
-    imagen = db.Column(db.String(200), nullable=True, default='default.png')
-
-    def __repr__(self):
-        return f'<Producto {self.nombre}>'
 
 class Venta(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -115,7 +113,7 @@ def dashboard():
     total_productos = Producto.query.count()
     stock_bajo = Producto.query.filter(Producto.stock <= 5).count()
     
-    # Cálculo preciso de ingresos diarios usando UTC coordinado
+    # Cálculo preciso de ingresos diarios
     hoy = datetime.now(timezone.utc).date()
     ventas_hoy = Venta.query.all()
     
@@ -124,12 +122,20 @@ def dashboard():
         if venta.fecha.date() == hoy:
             total_ventas_hoy += venta.total
 
+    # Definimos los datos del gráfico aquí arriba para que el render esté ordenado
+    datos_grafico = {
+        "ventas_hoy": total_ventas_hoy,
+        "total_inventario": sum([p.precio * p.stock for p in Producto.query.all()])
+    }
+    
     return render_template(
         'dashboard.html', 
         total_productos=total_productos, 
         stock_bajo=stock_bajo, 
-        total_ventas_hoy=total_ventas_hoy
+        total_ventas_hoy=total_ventas_hoy,
+        datos_grafico=datos_grafico
     )
+
 
 @app.route('/nosotros')
 def nosotros():
