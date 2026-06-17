@@ -280,50 +280,31 @@ def ventas_historial():
 # -------------------------------------------------------------------------
 # INICIALIZACIÓN DE LA APLICACIÓN
 # -------------------------------------------------------------------------
+import os
+
 if __name__ == '__main__':
-
     with app.app_context():
-
         db.create_all()
-
         
-
         # SCRIPT DE PRECARGA: Si el inventario está en cero, inserta datos iniciales
-
         if Producto.query.count() == 0:
-
             productos_iniciales = [
-
                 Producto(nombre="Inca Kola 1.5L", precio=4.50, stock=20),
-
                 Producto(nombre="Coca Cola 500ml", precio=2.80, stock=15),
-
                 Producto(nombre="Arroz Costeño 1kg", precio=4.20, stock=30),
-
                 Producto(nombre="Aceite Primor 1L", precio=8.90, stock=12),
-
                 Producto(nombre="Leche Gloria Azul Caneca", precio=4.00, stock=25),
-
                 Producto(nombre="Galletas Casino Chocolate", precio=1.00, stock=50),
-
                 Producto(nombre="Fideos Don Vittorio Spagetti 1kg", precio=3.70, stock=18),
-
                 Producto(nombre="Detergente Opal 1kg", precio=7.50, stock=8)
-
             ]
-
             
-
             db.session.bulk_save_objects(productos_iniciales)
-
             db.session.commit()
-
             print("¡Productos del minimarket cargados con éxito!")
-
     
-
-    # Ejecutamos el servidor local
-
-    app.run(debug=False, port=5010) 
-
-
+    # Render asigna un puerto de manera dinámica. Si corres en tu PC, usará el 5010 por defecto.
+    puerto = int(os.environ.get("PORT", 5010))
+    
+    # Escuchamos en '0.0.0.0' para permitir conexiones externas en la nube
+    app.run(host='0.0.0.0', port=puerto, debug=False)
