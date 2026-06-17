@@ -177,7 +177,7 @@
             let totalItem = item.precio * item.cantidad;
             totalGeneral += totalItem;
 
-            // Aquí usamos comillas invertidas de JS de forma limpia
+            // Inyección limpia usando Template Literals de JS
             tbody.innerHTML += `
                 <tr>
                     <td class="text-start small fw-bold">${item.nombre}</td>
